@@ -48,27 +48,15 @@ def draw_orig_and_post_pred_sample(orig, reconst, n):
         o = orig[rnd_idx]
         r = reconst[rnd_idx]
 
-        plt.subplot(n, 2, i)
-        plt.imshow(
-            o,
-            # cmap='gray',
-            aspect="auto",
-        )
-        # plt.title("Original")
-        i += 1
-
-        plt.subplot(n, 2, i)
-        plt.imshow(
-            r,
-            # cmap='gray',
-            aspect="auto",
-        )
-        # plt.title("Sampled")
+        axs[i - 1, 0].imshow(o, cmap="gray")
+        axs[i - 1, 0].set_title("Original")
+        axs[i - 1, 1].imshow(r, cmap="gray")
+        axs[i - 1, 1].set_title("Reconstructed")
         i += 1
 
     fig.suptitle("Original vs Reconstructed Data", fontsize=TITLE_FONT_SIZE)
     fig.tight_layout()
-    plt.show()
+    fig.savefig("figures/orig_vs_reconst.png")
 
 
 def plot_samples(samples, n):
@@ -123,6 +111,7 @@ def plot_latent_space(vae, n=30, figsize=15):
     grid_y = np.linspace(-scale, scale, n)[::-1]
 
     Z2 = [[x, y] for x in grid_x for y in grid_y]
+    Z2 = np.array(Z2)
     X_recon = vae.get_prior_samples_given_Z(Z2)
     X_recon = np.squeeze(X_recon)
     # print(X_recon.shape)
@@ -137,7 +126,7 @@ def plot_latent_space(vae, n=30, figsize=15):
                 j * digit_size : (j + 1) * digit_size,
             ] = x_decoded
 
-    plt.figure(figsize=(figsize, figsize))
+    fig = plt.figure(figsize=(figsize, figsize))
     start_range = digit_size // 2
     end_range = n * digit_size + start_range
     pixel_range = np.arange(start_range, end_range, digit_size)
@@ -148,7 +137,9 @@ def plot_latent_space(vae, n=30, figsize=15):
     plt.xlabel("z[0]")
     plt.ylabel("z[1]")
     plt.imshow(figure, cmap="Greys_r")
-    plt.show()
+    plt.title("Generated Samples From 2D Embedded Space", fontsize=TITLE_FONT_SIZE)
+    fig.tight_layout()
+    fig.savefig("figures/latent_space.png")
 
 
 # Custom scaler for 3d data
